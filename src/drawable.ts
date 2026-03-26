@@ -52,6 +52,7 @@ export default class Drawable {
     }
 
     addChild(child: Drawable) {
+        this.removeChild(child);
         this.children.push(child);
     }
     removeChild(child: Drawable) {
