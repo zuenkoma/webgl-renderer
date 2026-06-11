@@ -1,8 +1,8 @@
-export default class Color {
-    r: number;
-    g: number;
-    b: number;
-    a: number;
+export class Color {
+    readonly r: number;
+    readonly g: number;
+    readonly b: number;
+    readonly a: number;
 
     constructor(r: number, g: number, b: number, a = 1) {
         this.r = r;

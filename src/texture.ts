@@ -1,13 +1,18 @@
 const imageCache: Record<string, HTMLImageElement> = {};
 const textureCache: Record<string, Texture> = {};
 
-export default class Texture {
+export interface TextureOptions {
+    antialias?: boolean;
+    frames?: number;
+}
+
+export class Texture {
     readonly image: HTMLImageElement;
     readonly antialias: boolean;
     readonly frames: number;
     private glTextures: WeakMap<WebGLRenderingContext, WebGLTexture> = new WeakMap();
 
-    constructor(image: HTMLImageElement, { antialias = false, frames = 1 } = {}) {
+    constructor(image: HTMLImageElement, { antialias = false, frames = 1 }: TextureOptions = {}) {
         this.image = image;
         this.antialias = antialias;
         this.frames = frames;
@@ -29,7 +34,7 @@ export default class Texture {
         };
     }
 
-    getGlTexture(ctx: WebGLRenderingContext) {
+    getGlTexture(ctx: WebGLRenderingContext): WebGLTexture {
         let glTexture = this.glTextures.get(ctx);
 
         if (!glTexture) {
@@ -48,14 +53,14 @@ export default class Texture {
         return glTexture;
     }
 
-    unloadGlTexture(ctx: WebGLRenderingContext) {
+    unloadGlTexture(ctx: WebGLRenderingContext): void {
         const glTexture = this.glTextures.get(ctx);
         if (!glTexture) return;
         ctx.deleteTexture(glTexture);
         this.glTextures.delete(ctx);
     }
 
-    static async load(src: string, { antialias = true, frames = 1 } = {}) {
+    static async load(src: string, { antialias = true, frames = 1 }: TextureOptions = {}): Promise<Texture> {
         if (!imageCache[src]) {
             imageCache[src] = new Image();
             imageCache[src].src = src;

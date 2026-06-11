@@ -15,7 +15,7 @@ export interface DrawableOptions {
     scaleY?: number;
 }
 
-export default class Drawable {
+export class Drawable {
     private children: Drawable[] = [];
 
     x: number;
@@ -51,11 +51,11 @@ export default class Drawable {
         this.scaleY = scaleY;
     }
 
-    addChild(child: Drawable) {
+    addChild(child: Drawable): void {
         this.removeChild(child);
         this.children.push(child);
     }
-    removeChild(child: Drawable) {
+    removeChild(child: Drawable): void {
         const index = this.children.indexOf(child);
         if (index >= 0) this.children.splice(index, 1);
     }
@@ -64,7 +64,7 @@ export default class Drawable {
         return { width: 0, height: 0 };
     }
 
-    getTransform(transform = new DOMMatrix()) {
+    getTransform(transform = new DOMMatrix()): DOMMatrix {
         const { width, height } = this.getSize();
         return transform
             .translate(this.x, this.y)
@@ -73,18 +73,18 @@ export default class Drawable {
             .translateSelf(-this.pivotX * width / 2, -this.pivotY * height / 2);
     }
 
-    update(dt: number) {
+    update(dt: number): void {
         for (const child of this.children.sort((a, b) => a.layer - b.layer)) {
             child.update(dt);
         }
     }
 
-    render(ctx: WebGLRenderingContext, transform: DOMMatrix, opacity: number) {
+    render(ctx: WebGLRenderingContext, transform: DOMMatrix, opacity: number): void {
         const newTransform = this.getTransform(transform);
         for (const child of this.children.sort((a, b) => a.layer - b.layer)) {
             child.render(ctx, newTransform, opacity * this.opacity);
         }
     }
 
-    unloadShaders(_ctx: WebGLRenderingContext) { }
+    unloadShaders(_ctx: WebGLRenderingContext): void { }
 }

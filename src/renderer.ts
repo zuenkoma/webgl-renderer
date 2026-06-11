@@ -1,18 +1,18 @@
-import Color from './color.ts';
-import type Drawable from './drawable.ts';
+import { Color } from './color.ts';
+import type { Drawable } from './drawable.ts';
 
 export interface RendererOptions {
     antialias?: boolean;
     clearColor?: Color;
 }
 
-export default class Renderer {
+export class Renderer {
     readonly canvas: HTMLCanvasElement;
     protected ctx: WebGLRenderingContext;
 
     protected _clearColor!: Color;
 
-    constructor(canvas: HTMLCanvasElement, { antialias = true, clearColor = new Color(0, 0, 0, 0) }: RendererOptions) {
+    constructor(canvas: HTMLCanvasElement, { antialias = true, clearColor = new Color(0, 0, 0, 0) }: RendererOptions = {}) {
         this.canvas = canvas;
         this.ctx = this.canvas.getContext('webgl', { antialias })! || this.canvas.getContext('experimental-webgl', { antialias })!;
         this.clearColor = clearColor;
@@ -25,7 +25,7 @@ export default class Renderer {
         }).observe(this.canvas, { attributes: true });
     }
 
-    get clearColor() {
+    get clearColor(): Color {
         return this._clearColor;
     }
     set clearColor(color: Color) {
@@ -33,11 +33,7 @@ export default class Renderer {
         this.ctx.clearColor(color.r, color.g, color.b, color.a);
     }
 
-    update(root: Drawable, dt: number) {
-        root.update(dt);
-    }
-
-    render(root: Drawable) {
+    render(root: Drawable): void {
         this.ctx.clear(this.ctx.COLOR_BUFFER_BIT);
         root.render(
             this.ctx,

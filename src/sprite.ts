@@ -1,6 +1,6 @@
-import Drawable, { type DrawableOptions } from './drawable.ts';
+import { type DrawableOptions, Drawable } from './drawable.ts';
 import { createShadersProgram, deleteShadersProgram } from './shaders.ts';
-import type Texture from './texture.ts';
+import type { Texture } from './texture.ts';
 
 const vertexShader = `
 attribute vec2 a_position;
@@ -43,7 +43,7 @@ export interface SpriteOptions extends DrawableOptions {
     frameDuration?: number;
 }
 
-export default class Sprite extends Drawable {
+export class Sprite extends Drawable {
     texture: Texture;
     frame: number;
     frameDuration: number;
@@ -67,7 +67,7 @@ export default class Sprite extends Drawable {
         return this.texture.getSize();
     }
 
-    update(dt: number) {
+    update(dt: number): void {
         this.frameTimer += dt;
         while (this.frameTimer >= this.frameDuration) {
             this.frameTimer -= this.frameDuration;
@@ -76,7 +76,7 @@ export default class Sprite extends Drawable {
         super.update(dt);
     }
 
-    render(ctx: WebGLRenderingContext, transform: DOMMatrix, opacity: number) {
+    render(ctx: WebGLRenderingContext, transform: DOMMatrix, opacity: number): void {
         let shader = Sprite.shaders.get(ctx);
         if (!shader) {
             const program = createShadersProgram(ctx, vertexShader, fragmentShader)!;
@@ -139,7 +139,7 @@ export default class Sprite extends Drawable {
         super.render(ctx, transform, opacity);
     }
 
-    unloadShaders(ctx: WebGLRenderingContext) {
+    unloadShaders(ctx: WebGLRenderingContext): void {
         const shader = Sprite.shaders.get(ctx);
         if (shader) {
             deleteShadersProgram(ctx, shader.program);

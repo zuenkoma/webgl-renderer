@@ -1,4 +1,4 @@
-function createShader(ctx: WebGLRenderingContext, type: number, source: string) {
+function createShader(ctx: WebGLRenderingContext, type: number, source: string): WebGLShader | null {
     const shader = ctx.createShader(type);
     if (!shader) {
         console.error('Failed to create shader.');
@@ -14,7 +14,7 @@ function createShader(ctx: WebGLRenderingContext, type: number, source: string) 
     return null;
 }
 
-function createProgram(ctx: WebGLRenderingContext, vertexShader: WebGLShader, fragmentShader: WebGLShader) {
+function createProgram(ctx: WebGLRenderingContext, vertexShader: WebGLShader, fragmentShader: WebGLShader): WebGLProgram | null {
     const program = ctx.createProgram();
     ctx.attachShader(program, vertexShader);
     ctx.attachShader(program, fragmentShader);
@@ -27,7 +27,7 @@ function createProgram(ctx: WebGLRenderingContext, vertexShader: WebGLShader, fr
     return null;
 }
 
-export function createShadersProgram(ctx: WebGLRenderingContext, vertexShaderSource: string, fragmentShaderSource: string) {
+export function createShadersProgram(ctx: WebGLRenderingContext, vertexShaderSource: string, fragmentShaderSource: string): WebGLProgram | null {
     const vertexShader = createShader(ctx, ctx.VERTEX_SHADER, vertexShaderSource);
     if (!vertexShader) return null;
     const fragmentShader = createShader(ctx, ctx.FRAGMENT_SHADER, fragmentShaderSource);
@@ -38,7 +38,7 @@ export function createShadersProgram(ctx: WebGLRenderingContext, vertexShaderSou
     return program;
 }
 
-export function deleteShadersProgram(ctx: WebGLRenderingContext, program: WebGLProgram) {
+export function deleteShadersProgram(ctx: WebGLRenderingContext, program: WebGLProgram): void {
     if (ctx.getParameter(ctx.CURRENT_PROGRAM) === program) {
         ctx.useProgram(null);
     }

@@ -1,5 +1,5 @@
-import type Color from './color.ts';
-import Drawable, { type DrawableOptions } from './drawable.ts';
+import type { Color } from './color.ts';
+import { Drawable, type DrawableOptions } from "./drawable.js";
 import { createShadersProgram, deleteShadersProgram } from './shaders.ts';
 
 const vertexShader = `
@@ -36,7 +36,7 @@ const positions = new Float32Array([
     1, 1
 ]);
 
-export default class Rectangle extends Drawable {
+export class Rectangle extends Drawable {
     width: number;
     height: number;
     color: Color;
@@ -62,7 +62,7 @@ export default class Rectangle extends Drawable {
         };
     }
 
-    render(ctx: WebGLRenderingContext, transform: DOMMatrix, opacity: number) {
+    render(ctx: WebGLRenderingContext, transform: DOMMatrix, opacity: number): void {
         let shader = Rectangle.shaders.get(ctx);
         if (!shader) {
             const program = createShadersProgram(ctx, vertexShader, fragmentShader)!;
@@ -118,7 +118,7 @@ export default class Rectangle extends Drawable {
         super.render(ctx, transform, opacity);
     }
 
-    unloadShaders(ctx: WebGLRenderingContext) {
+    unloadShaders(ctx: WebGLRenderingContext): void {
         const shader = Rectangle.shaders.get(ctx);
         if (shader) {
             deleteShadersProgram(ctx, shader.program);
