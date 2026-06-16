@@ -68,10 +68,13 @@ export class Sprite extends Drawable {
     }
 
     update(dt: number): void {
+        if (!this.frameDuration || !this.texture.frames) return super.update(dt);
+
         this.frameTimer += dt;
-        while (this.frameTimer >= this.frameDuration) {
-            this.frameTimer -= this.frameDuration;
-            this.frame = (this.frame + 1) % this.texture.frames;
+        if (this.frameTimer >= Math.abs(this.frameDuration)) {
+            const frames = Math.trunc(this.frameTimer / this.frameDuration);
+            this.frameTimer -= frames * this.frameDuration;
+            this.frame = ((this.frame + frames) % this.texture.frames + this.texture.frames) % this.texture.frames;
         }
         super.update(dt);
     }
