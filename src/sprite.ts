@@ -41,12 +41,14 @@ const positions = new Float32Array([
 export interface SpriteOptions extends DrawableOptions {
     frame?: number;
     frameDuration?: number;
+    loop?: boolean;
 }
 
 export class Sprite extends Drawable {
     texture: Texture;
     frame: number;
     frameDuration: number;
+    loop: boolean;
     protected frameTimer = 0;
 
     protected static shaders: WeakMap<WebGLRenderingContext, {
@@ -56,11 +58,12 @@ export class Sprite extends Drawable {
         buffers: Record<string, WebGLBuffer>;
     }> = new WeakMap();
 
-    constructor(texture: Texture, { frame = 0, frameDuration = 100, ...options }: SpriteOptions = {}) {
+    constructor(texture: Texture, { frame = 0, frameDuration = 100, loop = true, ...options }: SpriteOptions = {}) {
         super(options);
         this.texture = texture;
         this.frame = frame % texture.frames;
         this.frameDuration = frameDuration;
+        this.loop = loop;
     }
 
     getSize() {
@@ -68,14 +71,18 @@ export class Sprite extends Drawable {
     }
 
     update(dt: number): void {
-        if (!this.frameDuration || !this.texture.frames) return super.update(dt);
-
-        this.frameTimer += dt;
-        if (this.frameTimer >= Math.abs(this.frameDuration)) {
-            const frames = Math.trunc(this.frameTimer / this.frameDuration);
-            this.frameTimer -= frames * this.frameDuration;
-            this.frame = ((this.frame + frames) % this.texture.frames + this.texture.frames) % this.texture.frames;
+        if (
+            this.frameDuration && this.texture.frames &&
+            (this.loop || (this.frameDuration > 0 ? this.frame < this.texture.frames - 1 : this.frame > 0))
+        ) {
+            this.frameTimer += dt;
+            if (this.frameTimer >= Math.abs(this.frameDuration)) {
+                const frames = Math.trunc(this.frameTimer / this.frameDuration);
+                this.frameTimer -= frames * this.frameDuration;
+                this.frame = ((this.frame + frames) % this.texture.frames + this.texture.frames) % this.texture.frames;
+            }
         }
+        else this.frameTimer = 0;
         super.update(dt);
     }
 
